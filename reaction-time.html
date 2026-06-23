@@ -97,7 +97,7 @@
 
         /* 隐藏类 */
         .hidden {
-            display: none !important;
+            display: none;
         }
 
         /* 历史记录 */
@@ -215,6 +215,8 @@
 
         // ===== 开始测试 =====
         function startTest() {
+            console.log('开始测试');
+
             // 直接设置样式，减少 DOM 操作
             body.style.backgroundColor = '#228be6';  // 蓝色
             startScreen.style.display = 'none';
@@ -222,21 +224,29 @@
 
             // 设置随机延迟后变色
             const delay = getRandomDelay();
+            console.log('延迟时间：', delay, 'ms');
+
             timeoutId = setTimeout(() => {
+                console.log('setTimeout 触发！');
                 changeColor();
             }, delay);
         }
 
         // ===== 背景变色 =====
         function changeColor() {
+            console.log('changeColor() 被调用');
+
             // 使用 performance.now() 获取高精度时间戳（微秒级）
             startTime = performance.now();
+            console.log('记录时间：', startTime);
 
             // 直接设置样式，减少 DOM 操作
             body.style.backgroundColor = '#40c057';
+            console.log('背景已变绿');
 
             // 隐藏等待界面
             waitingScreen.style.display = 'none';
+            console.log('等待界面已隐藏');
         }
 
         // ===== 处理点击 =====
