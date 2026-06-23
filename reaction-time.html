@@ -17,29 +17,29 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* 移除 background-color 的 transition，让变色立即生效 */
-            cursor: pointer;  /* 始终显示手型光标 */
-            user-select: none;  /* 禁止选中文字 */
+            cursor: pointer;
+            user-select: none;
+            transition: none;  /* 移除所有过渡 */
         }
 
         /* 初始状态：紫色背景 */
         .state-waiting {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
         }
 
         /* 准备状态：蓝色背景 */
         .state-ready {
-            background: linear-gradient(135deg, #4dabf7 0%, #228be6 100%);
+            background: #228be6;
         }
 
         /* 点击后状态：绿色背景 */
         .state-clicked {
-            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+            background: #40c057;
         }
 
         /* 太快了状态：红色背景 */
         .state-too-soon {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            background: #ee5a52;
         }
 
         /* 主容器 */
@@ -54,7 +54,6 @@
         h1 {
             font-size: 48px;
             margin-bottom: 20px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         /* 说明文字 */
@@ -69,7 +68,6 @@
             font-size: 72px;
             font-weight: bold;
             margin: 30px 0;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         /* 开始按钮 */
@@ -91,10 +89,6 @@
             box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
         }
 
-        .start-btn:active {
-            transform: scale(0.95);
-        }
-
         /* 隐藏类 */
         .hidden {
             display: none;
@@ -106,7 +100,6 @@
             padding: 20px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 15px;
-            backdrop-filter: blur(10px);
         }
 
         .history h3 {
@@ -215,45 +208,49 @@
 
         // ===== 开始测试 =====
         function startTest() {
-            console.log('开始测试');
+            console.log('✅ 开始测试');
 
-            // 直接设置样式，减少 DOM 操作
-            body.style.backgroundColor = '#228be6';  // 蓝色
+            // 切换 class 来控制背景色
+            body.className = 'state-ready';
+
+            // 隐藏开始界面，显示等待界面
             startScreen.style.display = 'none';
-            waitingScreen.style.display = 'block';  // 显示等待界面
+            waitingScreen.style.display = 'block';
 
             // 设置随机延迟后变色
             const delay = getRandomDelay();
-            console.log('延迟时间：', delay, 'ms');
+            console.log('⏱️ 延迟时间：', delay, 'ms');
 
             timeoutId = setTimeout(() => {
-                console.log('setTimeout 触发！');
+                console.log('⏰ setTimeout 触发了！');
                 changeColor();
             }, delay);
         }
 
         // ===== 背景变色 =====
         function changeColor() {
-            console.log('changeColor() 被调用');
+            console.log('🎨 changeColor() 被调用');
 
-            // 使用 performance.now() 获取高精度时间戳（微秒级）
+            // 使用 performance.now() 获取高精度时间戳
             startTime = performance.now();
-            console.log('记录时间：', startTime);
+            console.log('📊 记录时间：', startTime);
 
-            // 直接设置样式，减少 DOM 操作
-            body.style.backgroundColor = '#40c057';
-            console.log('背景已变绿');
+            // 切换 class 到绿色
+            body.className = 'state-clicked';
+            console.log('✅ 背景已变绿');
 
             // 隐藏等待界面
             waitingScreen.style.display = 'none';
-            console.log('等待界面已隐藏');
+            console.log('✅ 等待界面已隐藏');
         }
 
         // ===== 处理点击 =====
         function handleClick() {
+            console.log('🖱️ 点击事件触发');
+
             // 如果还没变色就点击了（startTime 为 0）
             if (startTime === 0) {
-                // 用户点太快了！
+                console.log('⚠️ 太快了！');
                 tooSoon();
                 return;
             }
@@ -261,6 +258,7 @@
             // 使用高精度时间计算
             const endTime = performance.now();
             const reactionTime = Math.round(endTime - startTime);
+            console.log('⏱️ 反应时间：', reactionTime, 'ms');
 
             // 显示结果
             showResult(reactionTime);
@@ -277,8 +275,10 @@
                 timeoutId = null;
             }
 
-            // 直接设置样式
-            body.style.backgroundColor = '#ee5a52';
+            // 切换 class 到红色
+            body.className = 'state-too-soon';
+
+            // 显示提示
             waitingScreen.style.display = 'none';
             resultScreen.style.display = 'block';
             resultTitle.textContent = '⚠️ 太快了！';
@@ -288,14 +288,16 @@
 
         // ===== 显示结果 =====
         function showResult(reactionTime) {
+            console.log('📊 显示结果');
+
             // 保存到历史记录
             reactionTimes.push(reactionTime);
 
-            // 先隐藏所有界面
+            // 隐藏所有界面
             startScreen.style.display = 'none';
             waitingScreen.style.display = 'none';
 
-            // 再显示结果界面
+            // 显示结果界面
             resultScreen.style.display = 'block';
 
             // 显示时间（毫秒）
@@ -333,13 +335,15 @@
 
             recentTimes.forEach((time, index) => {
                 const li = document.createElement('li');
-                li.textContent = `${reactionTimes.length - index}. ${time.toFixed(0)} ms`;
+                li.textContent = `${reactionTimes.length - index}. ${time} ms`;
                 historyList.appendChild(li);
             });
         }
 
         // ===== 重置测试 =====
         function resetTest() {
+            console.log('🔄 重置测试');
+
             // 清除定时器
             if (timeoutId) {
                 clearTimeout(timeoutId);
@@ -349,11 +353,13 @@
             // 重置变量
             startTime = 0;
 
-            // 重置界面（使用直接设置样式）
-            body.style.backgroundColor = '';  // 恢复 CSS class 定义的背景
+            // 切换回初始状态
+            body.className = 'state-waiting';
             resultScreen.style.display = 'none';
             waitingScreen.style.display = 'none';
             startScreen.style.display = 'block';
+
+            console.log('✅ 重置完成');
         }
 
         // ===== 事件监听 =====
@@ -372,6 +378,9 @@
             }
             handleClick();
         });
+
+        // 页面加载完成日志
+        console.log('✅ 页面加载完成，准备就绪！');
     </script>
 </body>
 </html>
