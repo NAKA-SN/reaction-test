@@ -215,10 +215,10 @@
 
         // ===== 开始测试 =====
         function startTest() {
-            // 切换到等待状态
-            body.className = 'state-ready';
-            startScreen.classList.add('hidden');
-            waitingScreen.classList.remove('hidden');
+            // 直接设置样式，减少 DOM 操作
+            body.style.backgroundColor = '#228be6';  // 蓝色
+            startScreen.style.display = 'none';
+            waitingScreen.style.display = 'block';
 
             // 设置随机延迟后变色
             const delay = getRandomDelay();
@@ -229,28 +229,28 @@
 
         // ===== 背景变色 =====
         function changeColor() {
-            // 记录当前时间（毫秒）
-            startTime = Date.now();
+            // 使用 performance.now() 获取高精度时间戳（微秒级）
+            startTime = performance.now();
 
-            // 切换到绿色背景（表示可以点击了）
-            body.className = 'state-clicked';
+            // 直接设置样式，减少 DOM 操作
+            body.style.backgroundColor = '#40c057';
 
             // 隐藏等待界面
-            waitingScreen.classList.add('hidden');
+            waitingScreen.style.display = 'none';
         }
 
         // ===== 处理点击 =====
         function handleClick() {
-            // 计算反应时间（当前时间 - 变色时间）
-            const endTime = Date.now();
-            const reactionTime = endTime - startTime;
-
             // 如果还没变色就点击了（startTime 为 0）
             if (startTime === 0) {
                 // 用户点太快了！
                 tooSoon();
                 return;
             }
+
+            // 使用高精度时间计算
+            const endTime = performance.now();
+            const reactionTime = Math.round(endTime - startTime);
 
             // 显示结果
             showResult(reactionTime);
@@ -267,12 +267,10 @@
                 timeoutId = null;
             }
 
-            // 切换到红色背景
-            body.className = 'state-too-soon';
-
-            // 显示提示
-            waitingScreen.classList.add('hidden');
-            resultScreen.classList.remove('hidden');
+            // 直接设置样式
+            body.style.backgroundColor = '#ee5a52';
+            waitingScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
             resultTitle.textContent = '⚠️ 太快了！';
             timeDisplay.textContent = '—';
             ratingDisplay.textContent = '等背景变色后再点击哦';
@@ -283,12 +281,11 @@
             // 保存到历史记录
             reactionTimes.push(reactionTime);
 
-            // 切换到结果界面
-            waitingScreen.classList.add('hidden');
-            resultScreen.classList.remove('hidden');
+            // 直接设置样式显示结果
+            resultScreen.style.display = 'block';
 
-            // 显示时间（保留2位小数）
-            timeDisplay.textContent = reactionTime.toFixed(0) + ' ms';
+            // 显示时间（毫秒）
+            timeDisplay.textContent = reactionTime + ' ms';
 
             // 根据反应时间给出评价
             let rating = '';
@@ -338,10 +335,11 @@
             // 重置变量
             startTime = 0;
 
-            // 切换回初始状态
-            body.className = 'state-waiting';
-            resultScreen.classList.add('hidden');
-            startScreen.classList.remove('hidden');
+            // 重置界面（使用直接设置样式）
+            body.style.backgroundColor = '';  // 恢复 CSS class 定义的背景
+            resultScreen.style.display = 'none';
+            waitingScreen.style.display = 'none';
+            startScreen.style.display = 'block';
         }
 
         // ===== 事件监听 =====
